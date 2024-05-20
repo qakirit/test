@@ -1,0 +1,51 @@
+from behave import *
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+
+@given(u'Launch the Browser')
+def step_impl(context):
+    context.driver = webdriver.Firefox()
+    context.driver.maximize_window()
+
+
+@when(u'Open the login page')
+def step_impl(context):
+    context.driver.get("https://practicetestautomation.com/practice-test-login/")
+
+
+@when(u'enter the username "{user}" and Password "{pwd}"')
+def enter_the_login(context, user, pwd):
+    context.driver.find_element(By.ID, "username").send_keys(user)
+    context.driver.find_element(By.ID, "password").send_keys(pwd)
+
+
+@when(u'clicking on the submit button')
+def step_impl(context):
+    context.driver.find_element(By.ID, "submit").click()
+    time.sleep(10)
+
+
+@then(u'login successful')
+def step_impl(context):
+    wait = WebDriverWait(context.driver, 1)
+    try:
+     login_text = wait.until(EC.visibility_of_element_located((By.XPATH, "//strong[text()='Congratulations student. You successfully logged in!']"))).text
+
+    except:
+        context.driver.quit()
+        assert True , "Test Pass we addded wrong infrom "
+    assert login_text == "Congratulations student. You successfully logged in!", "Login test Fail"
+
+    context.driver.quit()
+    assert True , "Test pass"
+
+
+
+
+
+
